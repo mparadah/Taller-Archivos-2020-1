@@ -1,0 +1,103 @@
+def imprimir_menu():
+  '''
+  Imprime el menu
+  '''
+  print("1. Leer datos")
+  print("2. Ver estadísticas por localidad")
+  print("3. Contagiados por fecha")
+  print("4. Descargar estadísticas por caso")
+  print("5. Descargar estadísticas generales")
+  print("6. Salir")
+
+def imprimir_submenu(opcion):
+  '''
+  Imprime el sub menu
+
+  :param str opcion: Opcion del menu principal
+  '''
+  if opcion == "1":
+    STR = "Leer datos"
+  elif opcion == "2":
+    STR = "Ver estadisticas por localidad"
+  elif opcion == "3":
+    STR = "Contagiados por fecha"
+  elif opcion == "4":
+    STR = "Descargar estadisticas por caso"
+  elif opcion == "5":
+    STR = "Descargar estadisticas generales"
+  elif opcion == "6":
+    STR = "Salir"
+  MSG = "Esta es la opcion "
+  print(MSG, STR)
+  print("Oprima q para volver al menu principal")  
+
+def  menu():
+  '''
+  Funcionamiento del menu
+  '''
+  while True:
+
+    imprimir_menu()
+    opcion = input()
+    
+    if opcion == '1':
+      while True:        
+        imprimir_submenu(opcion)
+        opcion2 = input()
+
+        if opcion2 == 'q':
+          break
+        else: 
+          print('Opcion incorrecta')
+         
+      
+    elif opcion == '2':
+      while True:        
+        imprimir_submenu(opcion)
+        opcion2 = input()
+
+        if opcion2 == 'q':
+          break
+        else: 
+          print('Opcion incorrecta')
+
+    elif opcion == '3':
+      while True:        
+        imprimir_submenu(opcion)
+        opcion2 = input()
+
+        if opcion2 == 'q':
+          break
+        else: 
+          print('Opcion incorrecta') 
+
+    elif opcion == '4':
+     while True:        
+        imprimir_submenu(opcion)
+        opcion2 = input()
+
+        if opcion2 == 'q':
+          break
+        else: 
+          print('Opcion incorrecta')
+
+    elif opcion == '5':
+     while True:        
+        imprimir_submenu(opcion)
+        opcion2 = input()
+
+        if opcion2 == 'q':
+          break
+        else: 
+          print('Opcion incorrecta')
+
+    elif opcion == '6':
+      break
+
+    else:
+      print('Opcion incorrecta')
+
+def main():
+  menu()
+ 
+main()
