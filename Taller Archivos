@@ -1,3 +1,45 @@
+def  contagiados_rango_fecha(dictionary, date_string_down, date_string_up):
+     dictionary = dict(dictionary)
+     top = date_string_up[:]
+     low = date_string_down[:]
+     counter = 0
+     dictionary_2 = dict()
+     set_1 = set()
+     for index in range(1, (len(dictionary)+1 ), 1): 
+          data = dictionary[index]
+          date = data[0]
+          localidad = data[2]
+          if len(date) == 9:
+               date = "0" + date          
+          if (((int(date[:2]) >= int(low[:2])) and (int(date[:2]) <= int(top[:2]))) and ((int(date[3:5]) >= int(low[3:5])) and (int(date[3:5]) <= int(top[3:5])))):
+               counter += 1
+               if localidad in dictionary_2.keys():
+                    X = dictionary_2[localidad]
+                    X += 1
+                    dictionary_2[localidad] = X
+               else:
+                    dictionary_2[localidad] = 1
+               set_1.add(localidad)
+     list_1 = list(set_1)
+     list_2 = sorted(list_1)
+     line = 47*"-"
+     total = str(counter)
+     string = " "*(22-len(total))
+     string_2 = " "*(22-len("TOTAL"))
+     print_1 = "|" + string_2 + "TOTAL" + "|" + string + total + "|"
+     print(line)
+     print("|             LOCALIDAD|  CASOS DIAGNOSTICADOS|")
+     print(line)
+     print(print_1)
+     print(line)
+     for key in list_2:
+          character = str(dictionary_2[key])
+          len_character = len(character)
+          character_2 = " "*(22-len_character)
+          character_3 = " "*(22-(len(key)))
+          print_character = "|" + character_3 + key + "|" + character_2 + character + "|"
+          print(print_character)
+          print(line)
 def leer_datos(archivo):
      Datos={}
      contagiado=[]
