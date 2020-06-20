@@ -98,44 +98,55 @@ def estadisticas_localidad(Datos, localidad):
      Param dict: Datos, este parametro recoge los diccionarios con los datos de
      todos los pacientes
      Param dict: localidad, esta va a ser la localidad que el usuario desea saber los datos 
-     Esta función recoge todos los datos respecto a una localidad y los imprime de manera ordenada
+     Esta funcion recoge todos los datos respecto a una localidad y los imprime de manera ordenada
      '''
      Contagiados=0
-     Genero={"M":0, "F":0 }
-     Casos={"importado":0, "relacionado":0, "desconocido":0, "en estudio":0}
-     Ubicacion={"casa":0, "hospital":0, "fallecido":0, "hospital UCI":0}
-     Edad={}
+     Genero={}
+     Casos={}
+     Ubicacion={}
+     Edad={"Ninos":0, "Adolescentes":0, "Adultos":0}
      Estados={}
      for valor in Datos.values():
           if valor[2]==localidad:
                Contagiados+=1
-               Genero[valor[4]]+=1
-               Casos[valor[5]]+=1
-               Ubicacion[valor[6]]+=1
-               if valor[3] not in Edad.keys():
-                    Edad[valor[3]]=1
+               if valor[4] not in Genero.keys():
+                    Genero[valor[4]]=1
                else:
-                    Edad[valor[3]]+=1
+                    Genero[valor[4]]+=1
+               if valor[5] not in Casos.keys():
+                    Casos[valor[5]]=1
+               else:
+                    Casos[valor[5]]+=1
+               if valor[6] not in Ubicacion.keys():
+                    Ubicacion[valor[6]]=1
+               else:
+                    Ubicacion[valor[6]]+=1
+               if int(valor[3])<=13 :
+                    Edad["Ninos"]+=1
+               elif int(valor[3])>13 and int(valor[3])<18:
+                    Edad["Adolescentes"]+=1     
+               else:
+                    Edad["Adultos"]+=1
                if valor[7]not in Estados.keys():
                     Estados[valor[7]]=1
                else:
                     Estados[valor[7]]+=1
      print("Total de contagiados: "+str(Contagiados))
-     print("Sexo:")
-     print("Hombres: "+str(Genero["M"]))
-     print("Mujeres: "+str(Genero["F"]))
-     print("Tipo de caso:")
+     print("SEXO:")
+     for llave, valor in Genero.items():
+          print((llave)+": "+str(valor))
+     print("TIPO DE CASO:")
      for llave, valor in Casos.items():
           print((llave)+": "+str(valor))
-     print("Ubicacion:")    
+     print("UBICACION:")    
      for llave, valor in Ubicacion.items():
           print((llave)+": "+str(valor))
-     print("Edad:")
+     print("EDAD")
      for llave, valor in Edad.items():
           print((llave)+": "+str(valor))
-     print("Estado:")
+     print("ESTADO")
      for llave, valor in Estados.items():
-          print((llave)+": "+str(valor))     
+          print((llave)+": "+str(valor))   
 def imprimir_menu():
   '''
   Imprime el menu
