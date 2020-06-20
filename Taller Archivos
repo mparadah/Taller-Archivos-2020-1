@@ -1,17 +1,28 @@
-def leer_datos():
-    data={}
-    try:
-        file = open('archios\Bogota_covid19.csv','r') 
-        rows = file.readlines() 
-        for row in range(1,len(rows)):
-            string = rows[row].lower()
-            string = string[0:-1] #\n
-            values = string.split(',')            
-            data[row]= values
-        file.close()           
-        return data
-    except:
-        print('EL ARCHIVO Bogota_covid19.csv NO PUDO SER LEIDO')   
+def leer_datos(archivo):
+     Datos={}
+     contagiado=[]
+     lectura=open(archivo, "r")
+     lineas=lectura.readlines()
+     try:
+          for n in range(1, len(lineas)):
+               linea=lineas[n]
+               primer_dicc=""
+               for i in range(0,len(linea)):
+                    if str(linea[i])!=",":
+                         primer_dicc+=str(linea[i]).lower()
+                    else:     
+                         contagiado.append(primer_dicc)
+                         primer_dicc=""
+               primer_dicc=primer_dicc.replace("\n", "")          
+               contagiado.append(primer_dicc)
+               Datos[n]=contagiado
+               n=n+1
+               contagiado=[]
+               lectura.seek(0)
+          lectura.close()
+      except:
+           print("Ha ocurrido un problema, el archivo Bogota_covid19.csv no pudo ser leido")
+     return Datos      
 
 def mayor_contagio(funcion, Datos):
      '''
@@ -67,32 +78,6 @@ def menor_contagio(funcion, Datos):
      print(nombremay1+": "+ str(may1))
      print(nombremay2+": "+ str(may2))
      print(nombremay3+": "+ str(may3))  
-def organizar_archivo(archivo):
-     Datos={}
-     contagiado=[]
-     n=1
-     try:
-          lectura=open(archivo, "r")
-          while n<=len(lectura.readlines()):
-               linea=lectura.readlines()[n]
-               primer_dicc=""
-               for i in range(0,len(linea)):
-                    if str(linea[i])!=",":
-                         primer_dicc+=str(linea[i]).lower()
-                    else:     
-                         contagiado.append(primer_dicc)
-                         primer_dicc=""
-               primer_dicc=primer_dicc.replace("\n", "")          
-               contagiado.append(primer_dicc)
-               Datos[n]=contagiado
-               n=n+1
-               contagiado=[]
-               lectura.seek(0)
-          lectura.close()
-          print(Datos)
-     except:
-          print("Ha ocurrido un problema, por favor descargue el archivo")
-     return Datos
 def estadisticas_localidad(Datos, localidad):
      '''
      Param dict: Datos, este parametro recoge los diccionarios con los datos de
