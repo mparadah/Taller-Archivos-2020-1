@@ -1,3 +1,18 @@
+def leer_datos():
+    data={}
+    try:
+        file = open('archios\Bogota_covid19.csv','r') 
+        rows = file.readlines() 
+        for row in range(1,len(rows)):
+            string = rows[row].lower()
+            string = string[0:-1] #\n
+            values = string.split(',')            
+            data[row]= values
+        file.close()           
+        return data
+    except:
+        print('EL ARCHIVO Bogota_covid19.csv NO PUDO SER LEIDO')   
+
 def mayor_contagio(funcion, Datos):
      '''
      param dict función: El parametro funcion recibe la funcion que va a sumar los totales de contagiados de 
