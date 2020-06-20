@@ -1,3 +1,110 @@
+def descargar_estadisticas_generales(dictionary):
+    """
+    La funcion recibe un diccionario con todos los datos de contagiados en Bogota,
+    cuenta la ocurrencia de las ubicaciones, tipos de casos, generos y edades por localidad,
+    junta los datos como strings en un una lista que contiene todas las lineas de informacion,
+    utilizando el formato .csv (comma separated value) con separador ",";
+    para adjuntarlos al archivo estadisticas_generales.csv
+
+    param dict dictionary: diccionario con los datos de todos los contagiados en Bogota
+    """
+    dictionary = dict(dictionary)
+    dictionary_2 = dict()
+    case = dict()
+    place = dict()
+    gender = dict()
+    set_1 = set()
+    sub_list_1 = [0,0,0,0,0]
+    sub_list_2 = [0,0,0,0]
+    for dat in dictionary.values():
+        data = dat[2:7]
+        set_1.add(data[0])
+        localidad = data[0]
+        if int(data[1]) < 14:
+            age = "N"
+        elif int(data[1]) > 17:
+            age = "A"
+        else:
+            age = "J"
+        sex = data[2]
+        case_type = data[3]
+        ubicacion = data[4]                                           
+        if localidad in dictionary_2.keys():                 
+            X = list(dictionary_2[localidad])
+            X += 1
+            dictionary_2[localidad] = X
+        else:
+            dictionary_2[localidad] = 1
+        if localidad in case.keys():             
+            X = list(case[localidad])
+            if case_type == "desconocido":
+                X[0] +=  1
+            elif case_type == "en estudio":
+                X[1] += 1
+            elif case_type == "relacionado":
+                X[2] += 1
+            elif case_type == "importado":
+                X[3] += 1
+            case[localidad] = X
+        else:
+            case[localidad] = sub_list_2
+        if localidad in place.keys():
+            X = list(place[localidad])
+            if ubicacion == "casa":
+                X[0] +=  1
+            elif ubicacion == "hospital":
+                X[1] +=  1
+            elif ubicacion == "hospital uci":
+                X[2] +=  1
+            elif ubicacion == "fallecido":
+                X[3] +=  1
+            else:
+                X[4] +=  1    
+            place[localidad] = X
+        else:
+            place[localidad] = sub_list_1
+        if localidad in gender.keys():                
+            X = list(gender[localidad])
+            if sex == "f":
+                X[0] +=  1
+            else:
+                X[1] +=  1
+            if age == "N":
+                X[2] +=  1
+            elif age == "J":
+                X[3] +=  1
+            else:
+                X[4] +=  1    
+            gender[localidad] = X
+        else:
+            gender[localidad] = sub_list_1
+    lst = list(set_1)
+    lst = sorted(lst)
+    list_1 = ["LOCALIDAD,UBICACION,,,,,CASO,,,,GENERO,,EDAD,,","Alfabeticamente,Hospital,Hospital UCI,Fallecido,Fallecido No aplica No causa Directa,Desconocido,En estudio,Relacionado,Importado,Mujeres,Hombres,Niños,Adolescentes,Adultos"]
+    for key in lst:
+        total = dictionary_2[key]
+        localidad = str(key) + ","
+        ubicacion_1 = [(str(round(((ubicacion_value/total)*100), 2))+"%") for ubicacion_value in list(place[key])]
+        ubicacion = ""
+        for character in ubicacion_1:
+            ubicacion += (character+",")
+        case_type_1 = [(str((round(((case_type_value/total)*100), 2))+"%") for case_type_value in list(case[key])]
+        case_type = ""
+        for character in case_type_1:
+            case_type += (character+",")
+        information_1 =  [(str(round(((information_value/total)*100), 2))+"%") for information_value in list(gender[key])]
+        information = ""
+        for character in information_1:
+            information += (character+",")
+        data_line = localidad+ubicacion+case_type+information[:(len(information)-1)]
+        list_1.append(data_line)
+    try:
+        file = open("archivos\estadisticas_generales.csv", "w")
+        for line in list_1:    
+            file.write(line + "\n")
+        file.close()
+    except:
+        print("El archivo estadisticas_generales.csv no pudo ser creado")
 def  contagiados_rango_fecha(dictionary, date_string_down, date_string_up):
      dictionary = dict(dictionary)
      top = date_string_up[:]
