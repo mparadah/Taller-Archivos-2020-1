@@ -1,3 +1,126 @@
+def mayor_contagio(funcion, Datos):
+     '''
+     param dict función: El parametro funcion recibe la funcion que va a sumar los totales de contagiados de 
+     todas las localidades
+     Param dict Datos: El parametro datos es el diccionario con todos los datos recogidos del archivo
+     Esta funcion identifica e imprime las 3 primeras localidades con mayor numero de contagios
+     '''
+     variable=funcion(Datos)
+     may1=0
+     may2=0
+     may3=0
+     for llave, valor in variable.items():
+          if valor>may3:
+               if valor>may2:
+                    if valor>may1:
+                         may1=valor
+                         nombremay1=llave
+                    else:     
+                         may2=valor
+                         nombremay2=llave
+               else:
+                    may3=valor
+                    nombremay3=llave
+     print("Localidades con mayor numero de contagios:")
+     print(nombremay1+": "+ str(may1))
+     print(nombremay2+": "+ str(may2))
+     print(nombremay3+": "+ str(may3))
+def menor_contagio(funcion, Datos):
+     '''
+     param dict función: El parametro funcion recibe la funcion que va a sumar los totales de contagiados de 
+     todas las localidades
+     Param dict Datos: El parametro datos es el diccionario con todos los datos recogidos del archivo
+     Esta funcion identifica e imprime las 3 primeras localidades con menor numero de contagios
+     '''     
+     variable=funcion(Datos)
+     may1=99999999999999999999999999999
+     may2=99999999999999999999999999999
+     may3=99999999999999999999999999999
+     for llave, valor in variable.items():
+          if valor<may3:
+               if valor<may2:
+                    if valor<may1:
+                         may1=valor
+                         nombremay1=llave
+                    else:     
+                         may2=valor
+                         nombremay2=llave
+               else:
+                    may3=valor
+                    nombremay3=llave
+     print("Localidades con menor numero de contagios:")
+     print(nombremay1+": "+ str(may1))
+     print(nombremay2+": "+ str(may2))
+     print(nombremay3+": "+ str(may3))  
+def organizar_archivo(archivo):
+     Datos={}
+     contagiado=[]
+     n=1
+     try:
+          lectura=open(archivo, "r")
+          while n<=len(lectura.readlines()):
+               linea=lectura.readlines()[n]
+               primer_dicc=""
+               for i in range(0,len(linea)):
+                    if str(linea[i])!=",":
+                         primer_dicc+=str(linea[i]).lower()
+                    else:     
+                         contagiado.append(primer_dicc)
+                         primer_dicc=""
+               primer_dicc=primer_dicc.replace("\n", "")          
+               contagiado.append(primer_dicc)
+               Datos[n]=contagiado
+               n=n+1
+               contagiado=[]
+               lectura.seek(0)
+          lectura.close()
+          print(Datos)
+     except:
+          print("Ha ocurrido un problema, por favor descargue el archivo")
+     return Datos
+def estadisticas_localidad(Datos, localidad):
+     '''
+     Param dict: Datos, este parametro recoge los diccionarios con los datos de
+     todos los pacientes
+     Param dict: localidad, esta va a ser la localidad que el usuario desea saber los datos 
+     Esta función recoge todos los datos respecto a una localidad y los imprime de manera ordenada
+     '''
+     Contagiados=0
+     Genero={"M":0, "F":0 }
+     Casos={"importado":0, "relacionado":0, "desconocido":0, "en estudio":0}
+     Ubicacion={"casa":0, "hospital":0, "fallecido":0, "hospital UCI":0}
+     Edad={}
+     Estados={}
+     for valor in Datos.values():
+          if valor[2]==localidad:
+               Contagiados+=1
+               Genero[valor[4]]+=1
+               Casos[valor[5]]+=1
+               Ubicacion[valor[6]]+=1
+               if valor[3] not in Edad.keys():
+                    Edad[valor[3]]=1
+               else:
+                    Edad[valor[3]]+=1
+               if valor[7]not in Estados.keys():
+                    Estados[valor[7]]=1
+               else:
+                    Estados[valor[7]]+=1
+     print("Total de contagiados: "+str(Contagiados))
+     print("Sexo:")
+     print("Hombres: "+str(Genero["M"]))
+     print("Mujeres: "+str(Genero["F"]))
+     print("Tipo de caso:")
+     for llave, valor in Casos.items():
+          print((llave)+": "+str(valor))
+     print("Ubicacion:")    
+     for llave, valor in Ubicacion.items():
+          print((llave)+": "+str(valor))
+     print("Edad:")
+     for llave, valor in Edad.items():
+          print((llave)+": "+str(valor))
+     print("Estado:")
+     for llave, valor in Estados.items():
+          print((llave)+": "+str(valor))     
 def imprimir_menu():
   '''
   Imprime el menu
