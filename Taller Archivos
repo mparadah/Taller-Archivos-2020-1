@@ -1,4 +1,85 @@
-def  contagiados_rango_fecha(dictionary, date_string_down, date_string_up):
+import os
+
+def leer_datos():
+    '''
+    esta funcion lee los datos que usara el programa
+    return dict data: Diccionario con los datos
+    '''
+    data={}
+    try:
+        file = open('archivos\Bogota_covid19.csv','r') 
+        rows = file.readlines() 
+        for row in range(1,len(rows)):
+            string = rows[row].lower()
+            string = string[0:-1] #\n
+            values = string.split(',')            
+            data[row]= values
+        file.close()           
+        return data
+    except:
+        print('EL ARCHIVO Bogota_covid19.csv NO PUDO SER LEIDO')    
+def estadisticas_localidad(Datos, localidad):
+     '''
+     Esta funcion recoge todos los datos respecto a una localidad y los imprime de manera ordenada
+     Param dict: Datos, este parametro recoge los diccionarios con los datos de
+     todos los pacientes
+     Param dict: localidad, esta va a ser la localidad que el usuario desea saber los datos      
+     '''
+     print(localidad)
+     Contagiados=0
+     Genero={}
+     Casos={}
+     Ubicacion={}
+     Edad={"Ninos":0, "Adolescentes":0, "Adultos":0}
+     Estados={}
+     for valor in Datos.values():
+          if valor[2]==localidad:
+               Contagiados+=1
+               if valor[4] not in Genero.keys():
+                    Genero[valor[4]]=1
+               else:
+                    Genero[valor[4]]+=1
+               if valor[5] not in Casos.keys():
+                    Casos[valor[5]]=1
+               else:
+                    Casos[valor[5]]+=1
+               if valor[6] not in Ubicacion.keys():
+                    Ubicacion[valor[6]]=1
+               else:
+                    Ubicacion[valor[6]]+=1
+               if int(valor[3])<=13 :
+                    Edad["Ninos"]+=1
+               elif int(valor[3])>13 and int(valor[3])<18:
+                    Edad["Adolescentes"]+=1     
+               else:
+                    Edad["Adultos"]+=1
+               if valor[7]not in Estados.keys():
+                    Estados[valor[7]]=1
+               else:
+                    Estados[valor[7]]+=1
+     print("Total de contagiados: "+str(Contagiados))
+     print("SEXO:")
+     for llave, valor in Genero.items():
+          print((llave)+": "+str(valor))
+     print("TIPO DE CASO:")
+     for llave, valor in Casos.items():
+          print((llave)+": "+str(valor))
+     print("UBICACION:")    
+     for llave, valor in Ubicacion.items():
+          print((llave)+": "+str(valor))
+     print("EDAD")
+     for llave, valor in Edad.items():
+          print((llave)+": "+str(valor))
+     print("ESTADO")
+     for llave, valor in Estados.items():
+          print((llave)+": "+str(valor))    
+def contagiados_rango_fecha(dictionary, date_string_down, date_string_up):
+     '''
+     Funcion que imprime la cantidad de casos por localidad entre una fecha ingresada por el usuario
+     param dict diccionario: Diccionario con los datos
+     param string date_string_down: Fecha menor
+     param string date_string_down: Fecha mayor
+     '''
      dictionary = dict(dictionary)
      top = date_string_up[:]
      low = date_string_down[:]
@@ -40,32 +121,6 @@ def  contagiados_rango_fecha(dictionary, date_string_down, date_string_up):
           print_character = "|" + character_3 + key + "|" + character_2 + character + "|"
           print(print_character)
           print(line)
-def leer_datos(archivo):
-     Datos={}
-     contagiado=[]
-     lectura=open(archivo, "r")
-     lineas=lectura.readlines()
-     try:
-          for n in range(1, len(lineas)):
-               linea=lineas[n]
-               primer_dicc=""
-               for i in range(0,len(linea)):
-                    if str(linea[i])!=",":
-                         primer_dicc+=str(linea[i]).lower()
-                    else:     
-                         contagiado.append(primer_dicc)
-                         primer_dicc=""
-               primer_dicc=primer_dicc.replace("\n", "")          
-               contagiado.append(primer_dicc)
-               Datos[n]=contagiado
-               n=n+1
-               contagiado=[]
-               lectura.seek(0)
-          lectura.close()
-      except:
-           print("Ha ocurrido un problema, el archivo Bogota_covid19.csv no pudo ser leido")
-     return Datos      
-
 def mayor_contagio(funcion, Datos):
      '''
      param dict función: El parametro funcion recibe la funcion que va a sumar los totales de contagiados de 
@@ -120,331 +175,97 @@ def menor_contagio(funcion, Datos):
      print(nombremay1+": "+ str(may1))
      print(nombremay2+": "+ str(may2))
      print(nombremay3+": "+ str(may3))  
-def estadisticas_localidad(Datos, localidad):
+def sumar_localidad(diccionario):
      '''
-     Param dict: Datos, este parametro recoge los diccionarios con los datos de
-     todos los pacientes
-     Param dict: localidad, esta va a ser la localidad que el usuario desea saber los datos 
-     Esta funcion recoge todos los datos respecto a una localidad y los imprime de manera ordenada
+     Suma la cantidad de contagiados por localidad y retorna un diccionario 
+     param dict diccionario: diccionario con los datos
+     return dict datos: 
      '''
-     Contagiados=0
-     Genero={}
-     Casos={}
-     Ubicacion={}
-     Edad={"Ninos":0, "Adolescentes":0, "Adultos":0}
-     Estados={}
-     for valor in Datos.values():
-          if valor[2]==localidad:
-               Contagiados+=1
-               if valor[4] not in Genero.keys():
-                    Genero[valor[4]]=1
-               else:
-                    Genero[valor[4]]+=1
-               if valor[5] not in Casos.keys():
-                    Casos[valor[5]]=1
-               else:
-                    Casos[valor[5]]+=1
-               if valor[6] not in Ubicacion.keys():
-                    Ubicacion[valor[6]]=1
-               else:
-                    Ubicacion[valor[6]]+=1
-               if int(valor[3])<=13 :
-                    Edad["Ninos"]+=1
-               elif int(valor[3])>13 and int(valor[3])<18:
-                    Edad["Adolescentes"]+=1     
-               else:
-                    Edad["Adultos"]+=1
-               if valor[7]not in Estados.keys():
-                    Estados[valor[7]]=1
-               else:
-                    Estados[valor[7]]+=1
-     print("Total de contagiados: "+str(Contagiados))
-     print("SEXO:")
-     for llave, valor in Genero.items():
-          print((llave)+": "+str(valor))
-     print("TIPO DE CASO:")
-     for llave, valor in Casos.items():
-          print((llave)+": "+str(valor))
-     print("UBICACION:")    
-     for llave, valor in Ubicacion.items():
-          print((llave)+": "+str(valor))
-     print("EDAD")
-     for llave, valor in Edad.items():
-          print((llave)+": "+str(valor))
-     print("ESTADO")
-     for llave, valor in Estados.items():
-          print((llave)+": "+str(valor))   
-def imprimir_menu():
-  '''
-  Imprime el menu
-  '''
-  print("1. Leer datos")
-  print("2. Ver estadísticas por localidad")
-  print("3. Contagiados por fecha")
-  print("4. Descargar estadísticas por caso")
-  print("5. Descargar estadísticas generales")
-  print("6. Salir")
+     datos={}
+     for i in diccionario.values():
+          if i[2] not in datos.keys():
+               datos[i[2]]=1
+          else:
+               datos[i[2]]+=1              
+     return datos
+def descargar_estadisticas_caso(data):
+    """
+    Crea el archivo estadisticas_caso.csv que contiene las estadisticas por caso
+    """
+    header0 = ['','F','','','','Ftotal','M','','','','Mtotal','GrandTotal']
+    header1 = ['Localidad ','Desconocido','En estudio','Importado','Relacionado','','Desconocido','En estudio','Importado','Relacionado','','']
+    glue = ','
+    box_line = []
+    try:
+        file = open('archivos\estadisticas_caso.csv','w')
+        file.write(glue.join(header0)+'\n')
+        file.write(glue.join(header1)+'\n')
+        localidades = {}
+        set_tipo_caso = set()
+        set_tipo_sexo = {'f','m'}
 
-def imprimir_submenu(opcion):
-  '''
-  Imprime el sub menu
+        for line in range(1,len(data)+1):
+            set_tipo_caso.add(data[line][5])
 
-  :param str opcion: Opcion del menu principal
-  '''
-  if opcion == "1":
-    STR = "Leer datos"
-  elif opcion == "2":
-    STR = "Ver estadisticas por localidad"
-  elif opcion == "3":
-    STR = "Contagiados por fecha"
-  elif opcion == "4":
-    STR = "Descargar estadisticas por caso"
-  elif opcion == "5":
-    STR = "Descargar estadisticas generales"
-  elif opcion == "6":
-    STR = "Salir"
-  MSG = "Esta es la opcion "
-  print(MSG, STR)
-  print("Oprima q para volver al menu principal")  
+        for line in range(1,len(data)+1):
+            if data[line][2] in localidades:
+                localidades[data[line][2]]['GrandTotal'] += 1
 
-def  menu():
-  '''
-  Funcionamiento del menu
-  '''
-  while True:
+                for localidad in  localidades:
+                    for sexo in set_tipo_sexo:
+                        if localidad == data[line][2] and sexo == data[line][4]:
+                            localidades[data[line][2]][sexo] ['total'] += 1                            
+                            for tipo_caso in set_tipo_caso:
+                                if data[line][5]== tipo_caso:
+                                    localidades[data[line][2]][sexo] [tipo_caso] += 1                            
+                         
+                                                    
+            else:
+                valoresF = {'total':0,'desconocido ':0,'en estudio':0,'importado':0,'relacionado':0}
+                valoresM = {'total':0,'desconocido ':0,'en estudio':0,'importado':0,'relacionado':0}
+                localidades[data[line][2]] = {'GrandTotal':1,'f':valoresF ,'m':valoresM}
 
-    imprimir_menu()
-    opcion = input()
-    
-    if opcion == '1':
-      while True:        
-        imprimir_submenu(opcion)
-        opcion2 = input()
+                for localidad in  localidades:
+                    for sexo in set_tipo_sexo:
+                        if localidad == data[line][2] and sexo == data[line][4]:
+                            localidades[data[line][2]][sexo] ['total'] = 1                            
+                            for tipo_caso in set_tipo_caso:
+                                if data[line][5]== tipo_caso:
+                                    localidades[data[line][2]][sexo] [tipo_caso] = 1
+                    
+        for localidad in localidades:
+            localidad_line = []
+            localidad_line.append(str(localidad))
+            localidad_line.append(str(localidades[localidad]['f']['desconocido ']))
+            localidad_line.append(str(localidades[localidad]['f']['en estudio']))
+            localidad_line.append(str(localidades[localidad]['f']['importado']))
+            localidad_line.append(str(localidades[localidad]['f']['relacionado']))
+            localidad_line.append(str(localidades[localidad]['f']['total']))
 
-        if opcion2 == 'q':
-          break
-        else: 
-          print('Opcion incorrecta')
-         
-      
-    elif opcion == '2':
-      while True:        
-        imprimir_submenu(opcion)
-        opcion2 = input()
+            localidad_line.append(str(localidades[localidad]['m']['desconocido ']))
+            localidad_line.append(str(localidades[localidad]['m']['en estudio']))
+            localidad_line.append(str(localidades[localidad]['m']['importado']))
+            localidad_line.append(str(localidades[localidad]['m']['relacionado']))
+            localidad_line.append(str(localidades[localidad]['m']['total']))
 
-        if opcion2 == 'q':
-          break
-        else: 
-          print('Opcion incorrecta')
+            localidad_line.append(str(localidades[localidad]['GrandTotal']))
+            line = ','.join(localidad_line)+'\n'
+            file.write(line)  
+        file.close()
+        print('El archivo estadisticas_caso.csv a sido creado')
 
-    elif opcion == '3':
-      while True:        
-        imprimir_submenu(opcion)
-        opcion2 = input()
-
-        if opcion2 == 'q':
-          break
-        else: 
-          print('Opcion incorrecta') 
-
-    elif opcion == '4':
-     while True:        
-        imprimir_submenu(opcion)
-        opcion2 = input()
-
-        if opcion2 == 'q':
-          break
-        else: 
-          print('Opcion incorrecta')
-
-    elif opcion == '5':
-     while True:        
-        imprimir_submenu(opcion)
-        opcion2 = input()
-
-        if opcion2 == 'q':
-          break
-        else: 
-          print('Opcion incorrecta')
-
-    elif opcion == '6':
-      break
-
-    else:
-      print('Opcion incorrecta')
-
-def  contagiados_rango_fecha(dictionary, date_string_down, date_string_up):
-"""
-La funcion recibe un diccionario con todos los datos de contagiados en Bogota,
-compara si las fechas de cada persona estan en el rango ingresado.
-Al final imprime los casos totalales en ese rango de fechas,
-también imprime los casos por localidad en orden alfabetico.
- 
-param dict dictionary: diccionario con los datos de todos los contagiados en Bogota
-param str date_string_down: cadena de caracteres con la fecha más antigua del rango
-param str date_string_up: cadena de caracteres con la fecha más reciente del rango
-"""
-  dictionary = dict(dictionary)
-	top = date_string_up[:]
-	low = date_string_down[:]
-	counter = 0
-	dictionary_2 = dict()
-	set_1 = set()
-	for index in range(1, (len(dictionary)+1 ), 1): 
-		data = dictionary[index]
-		date = data[0]
-		localidad = data[2]
-		if (((int(date[:2]) >= int(low[:2])) and (int(date[:2]) <= int(top[:2]))) and ((int(date[3:5]) >= int(low[3:5])) and (int(date[3:5]) <= int(top[3:5])))):
-			counter += 1
-			if localidad in dictionary_2.keys():
-				X = dictionary_2[localidad]
-				X += 1
-				dictionary_2[localidad] = X
-			else:
-				dictionary_2[localidad] = 1
-			set_1.add(localidad)
-	list_1 = list(set_1)
-	list_2 = sorted(list_1)
-	line = 47*"-"
-	total = str(counter)
-	string = " "*(22-len(total))
-	string_2 = " "*(22-len("TOTAL"))
-	print_1 = "|" + string_2 + "TOTAL" + "|" + string + total + "|"
-	print(line)
-	print("|             LOCALIDAD|  CASOS DIAGNOSTICADOS|")
-	print(line)
-	print(print_1)
-	print(line)
-	for key in list_2:
-		character = str(dictionary_2[key])
-		len_character = len(character)
-		character_2 = " "*(22-len_character)
-		character_3 = " "*(22-(len(key)))
-		print_character = "|" + character_3 + key + "|" + character_2 + character + "|"
-		print(print_character)
-		print(line)
-	
+    except:
+        print('EL ARCHIVO estadisticas_caso.csv NO PUDO SER CREADO')
 def descargar_estadisticas_generales(dictionary):
-"""
-La funcion recibe un diccionario con todos los datos de contagiados en Bogota,
-cuenta la ocurrencia de las ubicaciones, tipos de casos, generos y edades por localidad,
-junta los datos como strings en un una lista que contiene todas las lineas de informacion,
-utilizando el formato .csv (comma separated value) con separador ",";
-para adjuntarlos al archivo estadisticas_generales.csv
+    """
+    La funcion recibe un diccionario con todos los datos de contagiados en Bogota,
+    cuenta la ocurrencia de las ubicaciones, tipos de casos, generos y edades por localidad,
+    junta los datos como strings en un una lista que contiene todas las lineas de informacion,
+    utilizando el formato .csv (comma separated value) con separador ",";
+    para adjuntarlos al archivo estadisticas_generales.csv
 
-param dict dictionary: diccionario con los datos de todos los contagiados en Bogota
-"""
-	dictionary = dict(dictionary)
-	dictionary_2 = dict()
-	case = dict()
-	place = dict()
-	gender = dict()
-	set_1 = set()
-	sub_list_1 = [0,0,0,0,0]
-	sub_list_2 = [0,0,0,0]
-	for index in range(1, (len(dictionary)+1 ), 1):
-		data = dictionary[index]
-		data = data[2:7]
-		set_1.add(data[0])
-		localidad = data[0]
-		if int(data[1]) < 14:
-			age = "N"
-		elif int(data[1]) > 17:
-			age = "A"
-		else:
-			age = "J"
-		sex = data[2]
-		case_type = data[3]
-		ubicacion = data[4]                                           
-		if localidad in dictionary_2.keys():                 
-			X = dictionary_2[localidad]
-			X += 1
-			dictionary_2[localidad] = X
-		else:
-			dictionary_2[localidad] = 1
-		if localidad in case.keys():             
-			X = case[localidad]
-			if case_type == "desconocido":
-				X[0] +=  1
-			elif case_type == "en estudio":
-				X[1] += 1
-            elif case_type == "relacionado":
-				X[2] += 1
-			elif case_type == "importado":
-				X[3] += 1
-            case[localidad] = X
-        else:
-			case[localidad] = sub_list_2
-	    if localidad in place.keys():                  
-			X = place[localidad]
-			if ubicacion == "casa":
-				X[0] +=  1
-			elif ubicacion == "hospital":
-				X[1] +=  1
-            elif ubicacion == "hospital uci":
-				X[2] +=  1
-			elif ubicacion == "fallecido":
-				X[3] +=  1
-			else:
-				X[4] +=  1	
-            place[localidad] = X
-        else:
-			place[localidad] = sub_list_1
-        if localidad in gender.keys():                
-			X = gender[localidad]
-			if sex == "h":
-				X[0] +=  1
-			else:
-				X[1] +=  1
-            if age == "N":
-				X[2] +=  1
-			elif ubicacion == "J":
-				X[3] +=  1
-			else:
-				X[4] +=  1	
-            gender[localidad] = X
-        else:
-			gender[localidad] = sub_list_1
-    lst = list(set_1)
-	lst = sorted(lst)
-	list_1 = [["LOCALIDAD,UBICACION,,,,,CASO,,,,GENERO,,EDAD,,"],["Alfabeticamente,Hospital,Hospital UCI,Fallecido,Fallecido No aplica No causa Directa,Desconocido,En estudio,Relacionado,Importado,H,M,Niños,Adolescentes,Adultos"]]
-	for key in lst:
-		totalal = dictionary_2[key]
-		localidad = str(key) + ","
-		ubicacion_1 = [(str((ubicacion/total)*100)+"%") for ubicacion in place[key]]
-		ubicacion = ""
-		for character in ubicacion_1:
-			ubicacion += (character+",")
-		case_type_1 = [(str((case_type/total)*100)+"%") for case_type in case[key]]
-		case_type = ""
-		for character in case_type_1:
-			case_type += (character+",")
-		information_1 =  [(str((information/total)*100)+"%") for information in gender[key]]
-		information = ""
-		for character in information_1:
-			information += (character+",")
-		data_line = localidad+ubicacion+case_type+information[:(len(information)-1)]
-		list_1.append(data_line)
-	try:
-		file = open("archivos\estadisticas_generales.csv", "w")
-		for line in list_1:	
-			file.write(line + "\n")
-		file.close()
-	except:
-		print("El archivo estadisticas_generales.csv no pudo ser creado")
-
-def main():
-  menu()
-def descargar_estadisticas_generales(dictionary):
-"""
-La funcion recibe un diccionario con todos los datos de contagiados en Bogota,
-cuenta la ocurrencia de las ubicaciones, tipos de casos, generos y edades por localidad,
-junta los datos como strings en un una lista que contiene todas las lineas de informacion,
-utilizando el formato .csv (comma separated value) con separador ",";
-para adjuntarlos al archivo estadisticas_generales.csv
-
-param dict dictionary: diccionario con los datos de todos los contagiados en Bogota
-"""
+    param dict dictionary: diccionario con los datos de todos los contagiados en Bogota
+    """
     dictionary = dict(dictionary)
     dictionary_2 = dict()
     case = dict()
@@ -467,7 +288,7 @@ param dict dictionary: diccionario con los datos de todos los contagiados en Bog
         case_type = data[3]
         ubicacion = data[4]                                           
         if localidad in dictionary_2.keys():                 
-            X = list(dictionary_2[localidad])
+            X = dictionary_2[localidad]
             X += 1
             dictionary_2[localidad] = X
         else:
@@ -525,7 +346,8 @@ param dict dictionary: diccionario con los datos de todos los contagiados en Bog
         ubicacion = ""
         for character in ubicacion_1:
             ubicacion += (character+",")
-        case_type_1 = [(str((round(((case_type_value/total)*100), 2))+"%") for case_type_value in list(case[key])]
+
+        case_type_1 = [(str(round(((case_type_value/total)*100), 2))+"%") for case_type_value in list(case[key])]
         case_type = ""
         for character in case_type_1:
             case_type += (character+",")
@@ -537,9 +359,231 @@ param dict dictionary: diccionario con los datos de todos los contagiados en Bog
         list_1.append(data_line)
     try:
         file = open("archivos\estadisticas_generales.csv", "w")
-        for line in list_1:    
+        for line in list_1:
             file.write(line + "\n")
         file.close()
+        print('El archivo estadisticas_generales.csv a sido creado')
     except:
-        print("El archivo estadisticas_generales.csv no pudo ser creado") 
-main()
+        print("El archivo estadisticas_generales.csv no pudo ser creado")
+
+def imprimir_leer_datos(): 
+    '''
+    imprime el menu de leer datos
+    '''
+    print('Esta en la opcion de leer datos')
+    print('Imprima Q para volver al menu principal')
+def imprimir_estadisticas_localidad(diccionario): 
+    '''
+    imprime el menu de estadisticas por localidad
+    '''   
+    localidades = set()
+    dict_localidades = {}
+    list_localidades = []
+    for persona in range(1,len(diccionario)+1):        
+        localidades.add(diccionario[persona][2])
+    num = 0    
+    for localidad in localidades:        
+        list_localidades.append(localidad)
+    list_localidades.sort()    
+
+    for localidad in list_localidades:
+        dict_localidades[str(list_localidades.index(localidad))]= localidad
+        print(str(list_localidades.index(localidad))+'. '+localidad)    
+
+    while True:
+        clear_screen()
+        print('Esta en la opcion de estadisticas localidad')
+        for localidad in list_localidades:
+            dict_localidades[str(list_localidades.index(localidad))]= localidad
+            print(str(list_localidades.index(localidad))+'. '+localidad)
+        print('Imprima Q para volver al menu principal')
+
+        opcion = input()
+        localidad = opcion
+        if opcion in dict_localidades.keys():
+            clear_screen()
+            print(dict_localidades[localidad])
+            estadisticas_localidad(diccionario, dict_localidades[localidad])
+            print('Imprima Q para volver al menu principal')
+            while True:                
+                
+                opcion = input()
+                if opcion == 'q' or opcion =='Q':
+                    break
+                else:
+                    print('opcion incorrecta')
+
+        elif opcion == 'q' or opcion=='Q':
+            break
+        else:
+            print('opcion incorrecta')    
+def imprimir_contagiados_rango_fecha(diccionario):  
+    '''
+    imprime el menu de contagiados en una rango de fechas  
+    '''
+    print('Esta en la opcion de contagiados por rango fecha')        
+    print('Ingrese las fechas en formato dd-mm-aa')
+    while True:
+        fecha1 = input('Fecha 1: ')
+        fecha2 = input('Fecha 2: ')
+        try:        
+            contagiados_rango_fecha(diccionario, fecha1, fecha2)
+            break
+        except:
+            print('datos invalidos')
+    print('Imprima Q para volver al menu principal')           
+def imprimir_mayor_menor_contagio(datos):
+    '''
+    imprime el menu de localidades con mayores y menores contaghios
+    '''
+    print('Esta en la opcion de mayor y menor contagio')    
+    mayor_contagio(sumar_localidad, datos)    
+    menor_contagio(sumar_localidad, datos)
+    print('Imprima Q para volver al menu principal')
+
+def imprimir_descargar_estadisticas_localidad():
+    '''
+    imprime menu de descargar estadisticas por localidad
+    '''
+    print('Esta en la opcion de descargar estadisticas localidad')
+    print('Imprima Q para volver al menu principal')
+
+def imprimir_descargar_estadisticas_generales():
+    '''
+    imprime menu de descargar estadisticas generales
+    '''
+    print('Esta en la opcion de descargar estadisticas generales')
+    print('Imprima Q para volver al menu principal')
+def imprimir_menu():
+    '''
+    imprime el menu principal
+    '''
+    print('1. Leer datos')
+    print('2. Estadisticas por localidad')
+    print('3. Contagiados rango fecha')
+    print('4. Localidades con mayor y menor contagio')
+    print('5. Descargar estadisticas localidad')
+    print('6. Descargar estadisticas generales')
+    print('7. Salir ')
+def clear_screen(): 
+    '''
+    limpia la pantalla
+    '''
+    if os.name == "posix":
+        os.system ("clear")
+    elif os.name == "ce" or os.name == "nt" or os.name == "dos":
+        os.system ("cls")
+
+def menu():
+    diccionario = {}
+    while True:
+        clear_screen()
+        imprimir_menu()
+        opcion = input()
+        #leer datos
+        if opcion == '1':
+            clear_screen()
+            imprimir_leer_datos()
+            diccionario = leer_datos()
+            while True:    
+                opcion = input()            
+                if opcion == 'q' or opcion == 'Q':
+                    break
+                else:
+                    print('opcion invalida')
+                
+        #estadisticas localidad
+        elif opcion == '2': 
+            if len(diccionario) == 0:
+                
+                while True:
+                    clear_screen()
+                    print('Esta en la opcion de estadisticas por localidad')
+                    print('Los archivos no han sido leidos aun. Use la opcion 1 del menu principal para leer los archivos') 
+                    opcion = input('Ingrese q para volver al menu principal: ')
+                    if opcion == 'q' or opcion == 'Q':
+                        break
+                    else:
+                        print('opcion invalida')
+            else:                   
+                imprimir_estadisticas_localidad(diccionario)
+            
+        #contagiados_rango_fecha        
+        elif opcion == '3':
+            clear_screen()
+            if len(diccionario) == 0:
+               
+                while True:
+                    clear_screen()
+                    print('Esta en la opcion de contagiados por rango de fecha')
+                    print('Los archivos no han sido leidos aun. Use la opcion 1 del menu principal para leer los archivos')
+                    opcion = input('Ingrese q para volver al menu principal: ')
+                    if opcion == 'q' or opcion == 'Q':
+                        break
+                    else:
+                        print('opcion invalida')
+
+            else:    
+                imprimir_contagiados_rango_fecha(diccionario)
+                while True:
+                    opcion = input()
+                    if opcion == 'q' or opcion == 'Q':
+                        break
+                    else:
+                        print('opcion invalida')
+
+        #contagio #mayor #menor        
+        elif opcion == '4':
+            clear_screen()
+            try:
+                imprimir_mayor_menor_contagio(diccionario)
+                while True:
+                    opcion = input()
+                    if opcion == 'q' or opcion == 'Q':
+                        break
+                    else:
+                        print('opcion invalida')
+            except:
+                while True:
+                    clear_screen()
+                    print('Esta en la opcion de localidades con mayor y menor contagio')
+                    print('Los archivos no han sido leidos aun. Use la opcion 1 del menu principal para leer los archivos')
+                    opcion = input('Ingrese q para volver al menu principal: ')
+                    if opcion == 'q' or opcion == 'Q':
+                        break
+                    else:
+                        print('opcion invalida')           
+        #descarga estadisticas localidad
+        
+        elif opcion == '5':
+            clear_screen()
+            imprimir_descargar_estadisticas_localidad()
+            descargar_estadisticas_caso(diccionario)
+            while True:
+                opcion = input()
+                if opcion == 'q' or opcion == 'Q':
+                    break
+                else:
+                    print('opcion invalida')
+        
+        #descarga estadisticas generales
+        elif opcion == '6':
+            clear_screen()
+            imprimir_descargar_estadisticas_generales()
+            descargar_estadisticas_generales(diccionario)
+            
+            while True:
+                opcion = input()
+                if opcion == 'q' or opcion == 'Q':
+                    break
+                else:
+                    print('opcion invalida')
+        #salir
+        elif opcion == '7':
+            break
+        else:
+            print('opcion invalida')
+                        
+def main():
+    menu()
+main()      
